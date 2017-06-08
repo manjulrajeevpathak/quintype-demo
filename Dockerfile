@@ -9,4 +9,4 @@ VOLUME $APP_DIR
 EXPOSE 8080
 EXPOSE 80
 
-CMD ["php", "-S", "0.0.0.0:80", "-t", "/demo", "/demo/index.php"]
+CMD ["php", "-S", "0.0.0.0:80", "-t"]
