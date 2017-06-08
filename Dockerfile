@@ -1,17 +1,20 @@
-# Dockerfile
-FROM nimmis/apache-php5
+FROM php
 
-MAINTAINER Manjul Pathak
+ENV APP_DIR /app
+ENV APPLICATION_ENV development
 
-# Set the working directory to /app
-WORKDIR /app
+WORKDIR $APP_DIR
+VOLUME $APP_DIR
 
-# Copy the current directory contents into the container at /app
-ADD . /app
-
-CMD ["php", "-S", "0.0.0.0:80", "-t", "./demo", "./demo/index.php"]
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');    \
+    \$sig = file_get_contents('https://composer.github.io/installer.sig');      \
+    if (trim(\$sig) === hash_file('SHA384', 'composer-setup.php')) exit(0);     \
+    echo 'ERROR: Invalid installer signature' . PHP_EOL;                        \
+    unlink('composer-setup.php');                                               \
+    exit(1);"                                                                   \
+ && php composer-setup.php -- --filename=composer --install-dir=/usr/local/bin  \
+ && rm composer-setup.php
 
 EXPOSE 80
-EXPOSE 443
 
-
+CMD ["php", "-S", "0.0.0.0:80", "-t", "/demo", "/demo/index.php"]
